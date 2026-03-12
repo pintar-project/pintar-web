@@ -8,7 +8,7 @@
 
 <Sidebar.Provider>
 	<AppSidebar />
-	<main>
+	<main class="flex flex-1 flex-col min-w-0">
 		<Sidebar.Trigger />
 		{@render children?.()}
 	</main>
