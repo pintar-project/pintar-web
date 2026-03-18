@@ -35,7 +35,7 @@
                 <Sidebar.Menu class="flex flex-col gap-[8px]">
                     <Sidebar.MenuItem>
                         <Sidebar.MenuButton
-                            isActive={page.url.pathname === "/dashboard"}
+                            isActive={String(page.url.pathname) === "/dashboard"}
                             class="p-0"
                         >
                             {#snippet child({ props })}
@@ -57,12 +57,13 @@
 
                     <Sidebar.MenuItem>
                         <Sidebar.MenuButton
-                            isActive={page.url.pathname === "/"}
+                            isActive={String(page.url.pathname) ===
+                                "/dashboard/monitor-tugas"}
                             class="p-0"
                         >
                             {#snippet child({ props })}
                                 <a
-                                    href="/monitor-tugas"
+                                    href="/dashboard/monitor-tugas"
                                     {...props}
                                     class="data-[active=true]:bg-[rgba(239,239,249,0.7)]! data-[active=true]:text-[#5b5fc7]! flex items-center gap-3 w-full h-full p-[10px] rounded-[10px] hover:bg-[rgba(239,239,249,0.7)]! hover:text-[#5b5fc7]! group"
                                 >
@@ -90,7 +91,8 @@
                 <Sidebar.Menu class="flex flex-col gap-[8px]">
                     <Sidebar.MenuItem>
                         <Sidebar.MenuButton
-                            isActive={page.url.pathname === "/dashboard/manajemen-kelas"}
+                            isActive={String(page.url.pathname) ===
+                                "/dashboard/manajemen-kelas"}
                             class="p-0"
                         >
                             {#snippet child({ props })}
@@ -112,7 +114,8 @@
 
                     <Sidebar.MenuItem>
                         <Sidebar.MenuButton
-                            isActive={page.url.pathname === "/"}
+                            isActive={String(page.url.pathname) ===
+                                "/pustaka-materi"}
                             class="p-0"
                         >
                             {#snippet child({ props })}
@@ -134,7 +137,8 @@
 
                     <Sidebar.MenuItem>
                         <Sidebar.MenuButton
-                            isActive={page.url.pathname === "/"}
+                            isActive={String(page.url.pathname) ===
+                                "/asisten-ai"}
                             class="p-0"
                         >
                             {#snippet child({ props })}
@@ -165,7 +169,8 @@
                 <Sidebar.Menu class="flex flex-col gap-[8px]">
                     <Sidebar.MenuItem>
                         <Sidebar.MenuButton
-                            isActive={page.url.pathname === "/"}
+                            isActive={String(page.url.pathname) ===
+                                "/manajemen-kelas"}
                             class="p-0"
                         >
                             {#snippet child({ props })}
@@ -187,7 +192,8 @@
 
                     <Sidebar.MenuItem>
                         <Sidebar.MenuButton
-                            isActive={page.url.pathname === "/"}
+                            isActive={String(page.url.pathname) ===
+                                "/pustaka-materi"}
                             class="p-0"
                         >
                             {#snippet child({ props })}

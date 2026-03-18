@@ -21,6 +21,8 @@
             return "Pemetaan Gaya Belajar";
         if (page.url.pathname.includes("/manajemen-kelas"))
             return "Manajemen Kelas";
+        if (page.url.pathname.includes("/monitor-tugas"))
+            return "Monitor Tugas";
         if (classesState.list.length === 0) return "Manajemen Kelas";
         return "Dasbor Analitik Siswa";
     });
@@ -60,7 +62,7 @@
                                     >Semester 1</span
                                 >
                             </p>
-                            {#if title !== "Manajemen Kelas" && classesState.list.length > 0}
+                            {#if title !== "Manajemen Kelas" && title !== "Monitor Tugas" && classesState.list.length > 0}
                                 <Separator
                                     orientation="vertical"
                                     class="h-3 bg-gray-200"
