@@ -90,12 +90,12 @@
                 <Sidebar.Menu class="flex flex-col gap-[8px]">
                     <Sidebar.MenuItem>
                         <Sidebar.MenuButton
-                            isActive={page.url.pathname === "/manajemen-kelas"}
+                            isActive={page.url.pathname === "/dashboard/manajemen-kelas"}
                             class="p-0"
                         >
                             {#snippet child({ props })}
                                 <a
-                                    href="/manajemen-kelas"
+                                    href="/dashboard/manajemen-kelas"
                                     {...props}
                                     class="data-[active=true]:bg-[rgba(239,239,249,0.7)]! data-[active=true]:text-[#5b5fc7]! flex items-center gap-3 w-full h-full p-[10px] rounded-[10px] hover:bg-[rgba(239,239,249,0.7)]! hover:text-[#5b5fc7]! group"
                                 >

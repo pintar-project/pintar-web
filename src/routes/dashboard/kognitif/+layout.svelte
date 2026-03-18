@@ -11,13 +11,7 @@
     const title = $derived(isKelompokPage ? "Pemetaan Kelompok" : "Pemetaan Kognitif");
 </script>
 
-<div class="flex-1 overflow-y-auto bg-white p-8 space-y-8">
-    <div class="flex items-center justify-between">
-        <h1 class="text-[24px] font-bold text-[#252424]">{title}</h1>
-        <a href="/dashboard" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <X class="size-6 text-[#252424]" />
-        </a>
-    </div>
+<div class="p-8 space-y-8">
 
     <div class="relative w-full overflow-hidden rounded-[24px]">
         <img src={BannerKognitif} alt="Banner" class="w-full h-auto object-cover" />
