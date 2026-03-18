@@ -90,7 +90,7 @@
                 <Sidebar.Menu class="flex flex-col gap-[8px]">
                     <Sidebar.MenuItem>
                         <Sidebar.MenuButton
-                            isActive={page.url.pathname === "/"}
+                            isActive={page.url.pathname === "/manajemen-kelas"}
                             class="p-0"
                         >
                             {#snippet child({ props })}

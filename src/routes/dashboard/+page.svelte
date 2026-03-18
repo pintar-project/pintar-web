@@ -15,7 +15,7 @@
     import BuatKelasIcon from "../../lib/assets/icon-wrapper.png";
     import CreateClassDialog from "$lib/components/dashboard/CreateClassDialog.svelte";
 
-    const hasClasses = false;
+    const hasClasses = true;
     let openCreateClass = $state(false);
 
     const MAX_VALUE = 45;
