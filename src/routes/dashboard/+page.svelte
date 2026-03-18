@@ -246,7 +246,7 @@
                 </div>
 
                 <a
-                    href="/"
+                    href="/dashboard/kognitif"
                     class="text-sm text-[#5b5fc7] font-medium mt-auto flex items-center gap-1.5 hover:underline"
                 >
                     Lihat Detail <img
@@ -302,7 +302,7 @@
                 </div>
 
                 <a
-                    href="/"
+                    href="/dashboard/gaya-belajar"
                     class="text-sm text-[#5b5fc7] font-medium mt-auto flex items-center gap-1.5 hover:underline"
                 >
                     Lihat Detail <img
