@@ -8,16 +8,41 @@
     import CheckCircle from "@lucide/svelte/icons/check-circle";
     import { fade, fly } from "svelte/transition";
 
-    let email = $state("");
-    let password = $state("");
-    let isLoading = $state(false);
+    import { createMutation } from "@tanstack/svelte-query";
+    import { createForm } from "svelte-forms-lib";
+    import { authService } from "../../api/authService";
+    import { goto } from "$app/navigation";
 
-    async function handleSubmit(e: Event) {
-        e.preventDefault();
-        isLoading = true;
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        isLoading = false;
-    }
+    import Cookies from "js-cookie";
+    import { authState } from "$lib/state/auth.svelte";
+
+    const loginMutation = createMutation(() => ({
+        mutationFn: (data: UserLogin) => authService.userLogin(data),
+        onSuccess: (response) => {
+            const data = response.data.data;
+            const accessToken = response.data.token.access_token;
+
+            authState.user = data;
+
+            goto("/dashboard");
+            Cookies.set("access_token", accessToken);
+        },
+        onError: (error: Error) => {
+            console.error("Login error:", error);
+        },
+    }));
+
+    const { form, errors, handleChange, handleSubmit } = createForm({
+        initialValues: {
+            email: "",
+            password: "",
+        },
+        onSubmit: (values) => {
+            loginMutation.mutate(values as UserLogin);
+        },
+    });
+
+    const isLoading = $derived(loginMutation.isPending);
 </script>
 
 <div class="min-h-screen w-full flex bg-white font-sans">
@@ -209,13 +234,20 @@
                             </div>
                             <Input
                                 id="email"
+                                name="email"
                                 type="email"
                                 placeholder="nama@email.com"
-                                bind:value={email}
+                                value={$form.email}
+                                oninput={handleChange}
                                 class="h-12 pl-11 bg-white border-[#d1d5db] hover:border-[#9ca3af] focus-visible:ring-[3px] focus-visible:ring-[#5b5fc7]/15 focus-visible:border-[#5b5fc7] rounded-[12px] text-[15px] font-medium text-[#111827] placeholder:text-[#9ca3af] placeholder:font-normal transition-all shadow-sm"
                                 required
                             />
                         </div>
+                        {#if $errors.email}
+                            <span class="text-xs text-red-500"
+                                >{$errors.email}</span
+                            >
+                        {/if}
                     </div>
 
                     <div
@@ -242,13 +274,20 @@
                             </div>
                             <Input
                                 id="password"
+                                name="password"
                                 type="password"
                                 placeholder="••••••••"
-                                bind:value={password}
+                                value={$form.password}
+                                oninput={handleChange}
                                 class="h-12 pl-11 bg-white border-[#d1d5db] hover:border-[#9ca3af] focus-visible:ring-[3px] focus-visible:ring-[#5b5fc7]/15 focus-visible:border-[#5b5fc7] rounded-[12px] text-[15px] font-medium text-[#111827] placeholder:text-[#9ca3af] placeholder:font-normal transition-all shadow-sm"
                                 required
                             />
                         </div>
+                        {#if $errors.password}
+                            <span class="text-xs text-red-500"
+                                >{$errors.password}</span
+                            >
+                        {/if}
                     </div>
                 </div>
 
