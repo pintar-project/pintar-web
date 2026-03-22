@@ -1,14 +1,21 @@
 <script lang="ts">
+	import { page } from "$app/state";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import AppSidebar from "$lib/components/app-sidebar.svelte";
 	import "../routes/layout.css";
 
 	let { children } = $props();
+
+	const isAuthPage = $derived(page.url.pathname === "/login");
 </script>
 
-<Sidebar.Provider>
-	<AppSidebar />
-	<main class="flex flex-1 flex-col min-w-0">
-		{@render children?.()}
-	</main>
-</Sidebar.Provider>
+{#if isAuthPage}
+	{@render children?.()}
+{:else}
+	<Sidebar.Provider>
+		<AppSidebar />
+		<main class="flex flex-1 flex-col min-w-0">
+			{@render children?.()}
+		</main>
+	</Sidebar.Provider>
+{/if}
