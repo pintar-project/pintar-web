@@ -109,7 +109,6 @@
         {/if}
     </header>
 
-    <!-- Scrollable content area -->
     <main class="flex-1 overflow-y-auto w-full">
         {@render children()}
     </main>

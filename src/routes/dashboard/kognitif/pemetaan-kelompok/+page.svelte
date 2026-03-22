@@ -149,7 +149,6 @@
 </script>
 
 
-    <!-- Results Card -->
     {#if kognitifState.showResults}
     <div
         class="bg-white rounded-[24px] border border-border shadow-sm p-8 space-y-8"
@@ -188,7 +187,6 @@
         <div class="grid grid-cols-4 gap-8">
             {#each groups as group}
                 <div class="space-y-6">
-                    <!-- Group Header -->
                     <div
                         class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar"
                     >
@@ -205,7 +203,6 @@
                         {/each}
                     </div>
 
-                    <!-- Students List -->
                     <div class="space-y-4">
                         {#each group.students as student}
                             <div class="flex items-center gap-3 group/item">
