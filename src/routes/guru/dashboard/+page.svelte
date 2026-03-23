@@ -1,8 +1,7 @@
 <script lang="ts">
     import Separator from "$lib/components/ui/separator/separator.svelte";
-    import LogoBuku from "../../lib/assets/banner (1).png";
+    import LogoBuku from "$lib/assets/banner (1).png";
     import Shape from "$lib/assets/Shape.png";
-    import ArrowDownIcon from "@lucide/svelte/icons/arrow-down";
     import { Progress } from "$lib/components/ui/progress";
     import type { ApexOptions } from "apexcharts";
     import { Chart } from "@flowbite-svelte-plugins/chart";
@@ -12,126 +11,63 @@
     import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
     import Ilustration from "$lib/assets/1 5974209.png";
     import { Button } from "$lib/components/ui/button";
-    import BuatKelasIcon from "../../lib/assets/icon-wrapper.png";
+    import BuatKelasIcon from "$lib/assets/icon-wrapper.png";
     import CreateClassDialog from "$lib/components/dashboard/CreateClassDialog.svelte";
+
+    import dashboardData from "$lib/json/data_dasbor_analitik_XI_IPS_2.json";
 
     const hasClasses = true;
     let openCreateClass = $state(false);
 
-    const MAX_VALUE = 45;
+    const stats = dashboardData.statistik_pemetaan;
+    const header = dashboardData.header_kelas;
+
+    const MAX_VALUE = header.jumlah_siswa;
+
     const kognitifData = [
-        { label: "Tinggi", value: 15 },
-        { label: "Sedang", value: 19 },
-        { label: "Rendah", value: 9 },
+        { label: "Tinggi", value: stats.kognitif.tinggi },
+        { label: "Sedang", value: stats.kognitif.sedang },
+        { label: "Rendah", value: stats.kognitif.rendah },
     ];
 
+    const totalStudents = header.jumlah_siswa;
     const gayaBelajarLegend = [
-        { label: "Auditori", pct: 66, color: "#5b5fc7" },
-        { label: "Visual", pct: 23, color: "#e05252" },
-        { label: "Kinestetik", pct: 11, color: "#d1d5db" },
+        {
+            label: "Auditori",
+            pct: Math.round(
+                (stats.gaya_belajar.auditori / totalStudents) * 100,
+            ),
+            color: "#5b5fc7",
+        },
+        {
+            label: "Visual",
+            pct: Math.round((stats.gaya_belajar.visual / totalStudents) * 100),
+            color: "#e05252",
+        },
+        {
+            label: "Kinestetik",
+            pct: Math.round(
+                (stats.gaya_belajar.kinestetik / totalStudents) * 100,
+            ),
+            color: "#d1d5db",
+        },
     ];
 
-    const siswaData = [
-        {
-            id: "ID-1243",
-            nama: "Andrian Muhammad",
-            gaya: "Auditori",
-            kognitif: "Tinggi",
-            keaktifan: 87.67,
-            avatar: "https://i.pravatar.cc/150?u=ID-1243",
-        },
-        {
-            id: "ID-1245",
-            nama: "Alya Zahra",
-            gaya: "Auditori",
-            kognitif: "Rendah",
-            keaktifan: 55.72,
-            avatar: "https://i.pravatar.cc/150?u=ID-1245",
-        },
-        {
-            id: "ID-1247",
-            nama: "Aidan Kareem",
-            gaya: "Visual",
-            kognitif: "Sedang",
-            keaktifan: 75.55,
-            avatar: "https://i.pravatar.cc/150?u=ID-1247",
-        },
-        {
-            id: "ID-1255",
-            nama: "Rafif Alvaro",
-            gaya: "Kinestetik",
-            kognitif: "Tinggi",
-            keaktifan: 90.69,
-            avatar: "https://i.pravatar.cc/150?u=ID-1255",
-        },
-        {
-            id: "ID-1262",
-            nama: "Naufal Rayyan",
-            gaya: "Auditori",
-            kognitif: "Sedang",
-            keaktifan: 80.67,
-            avatar: "https://i.pravatar.cc/150?u=ID-1262",
-        },
-        {
-            id: "ID-1266",
-            nama: "Keira Safira",
-            gaya: "Visual",
-            kognitif: "Rendah",
-            keaktifan: 70.57,
-            avatar: "https://i.pravatar.cc/150?u=ID-1266",
-        },
-        {
-            id: "ID-1270",
-            nama: "Bimo Arya",
-            gaya: "Auditori",
-            kognitif: "Sedang",
-            keaktifan: 82.34,
-            avatar: "https://i.pravatar.cc/150?u=ID-1270",
-        },
-        {
-            id: "ID-1275",
-            nama: "Citra Lestari",
-            gaya: "Visual",
-            kognitif: "Tinggi",
-            keaktifan: 94.12,
-            avatar: "https://i.pravatar.cc/150?u=ID-1275",
-        },
-        {
-            id: "ID-1280",
-            nama: "Deni Ramadhan",
-            gaya: "Kinestetik",
-            kognitif: "Rendah",
-            keaktifan: 61.45,
-            avatar: "https://i.pravatar.cc/150?u=ID-1280",
-        },
-        {
-            id: "ID-1285",
-            nama: "Eka Putri",
-            gaya: "Auditori",
-            kognitif: "Tinggi",
-            keaktifan: 88.92,
-            avatar: "https://i.pravatar.cc/150?u=ID-1285",
-        },
-        {
-            id: "ID-1290",
-            nama: "Fahri Alamsyah",
-            gaya: "Visual",
-            kognitif: "Sedang",
-            keaktifan: 79.88,
-            avatar: "https://i.pravatar.cc/150?u=ID-1290",
-        },
-        {
-            id: "ID-1295",
-            nama: "Gita Permata",
-            gaya: "Auditori",
-            kognitif: "Sedang",
-            keaktifan: 76.54,
-            avatar: "https://i.pravatar.cc/150?u=ID-1295",
-        },
-    ];
+    const siswaData = dashboardData.data_siswa.map((s: any) => ({
+        id: s.id_siswa,
+        nama: s.nama,
+        gaya: s.gaya_belajar,
+        kognitif: s.kognitif,
+        keaktifan: parseFloat(s.keaktifan),
+        avatar: `https://i.pravatar.cc/150?u=${s.id_siswa}`,
+    }));
 
     const options: ApexOptions = {
-        series: [66, 23, 11],
+        series: [
+            stats.gaya_belajar.auditori,
+            stats.gaya_belajar.visual,
+            stats.gaya_belajar.kinestetik,
+        ],
         colors: ["#5b5fc7", "#e05252", "#d1d5db"],
         chart: {
             height: 240,
@@ -158,7 +94,11 @@
     };
 </script>
 
-<div class={hasClasses ? "pb-10" : "flex flex-col items-center justify-center min-h-[60vh] gap-8"}>
+<div
+    class={hasClasses
+        ? "pb-10"
+        : "flex flex-col items-center justify-center min-h-[60vh] gap-8"}
+>
     {#if hasClasses}
         <img
             src={LogoBuku}
@@ -203,7 +143,7 @@
                 </div>
 
                 <a
-                    href="/dashboard/kognitif"
+                    href="/guru/dashboard/kognitif"
                     class="text-sm text-[#5b5fc7] font-medium mt-auto flex items-center gap-1.5 hover:underline"
                 >
                     Lihat Detail <img
@@ -259,7 +199,7 @@
                 </div>
 
                 <a
-                    href="/dashboard/gaya-belajar"
+                    href="/guru/dashboard/gaya-belajar"
                     class="text-sm text-[#5b5fc7] font-medium mt-auto flex items-center gap-1.5 hover:underline"
                 >
                     Lihat Detail <img
@@ -377,7 +317,6 @@
         </div>
     {:else}
         <div class="flex-1 flex flex-col overflow-hidden">
-
             <div class="mt-[30px] relative z-50">
                 <Button
                     onclick={() => {
@@ -396,9 +335,7 @@
 
             <CreateClassDialog bind:open={openCreateClass} />
 
-            <div
-                class="flex flex-col items-center justify-center -mt-10"
-            >
+            <div class="flex flex-col items-center justify-center -mt-10">
                 <img
                     src={Ilustration}
                     alt="Empty State"

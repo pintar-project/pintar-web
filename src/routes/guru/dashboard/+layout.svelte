@@ -23,6 +23,8 @@
             return "Manajemen Kelas";
         if (page.url.pathname.includes("/monitor-tugas"))
             return "Monitor Tugas";
+        if (page.url.pathname.includes("/pustaka-materi"))
+            return "Pustaka Materi";
         if (classesState.list.length === 0) return "Manajemen Kelas";
         return "Dasbor Analitik Siswa";
     });
@@ -97,7 +99,7 @@
                         {title}
                     </h1>
                     <a
-                        href="/dashboard"
+                        href="/guru/dashboard"
                         class="p-2.5 hover:bg-gray-100 rounded-full transition-all group"
                     >
                         <X

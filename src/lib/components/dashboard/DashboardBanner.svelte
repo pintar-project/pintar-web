@@ -61,7 +61,7 @@
         {/if}
     {/if}
 
-    <!-- Background decorative shapes -->
+    
     <div
         class="absolute -left-10 -bottom-10 size-40 bg-[#ffec99] rounded-full opacity-50 blur-3xl"
     ></div>

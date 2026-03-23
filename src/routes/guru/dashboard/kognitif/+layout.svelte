@@ -25,7 +25,7 @@
                     <span>Buat Kelompok</span>
                 </button>
             {:else}
-                <a href="/dashboard/kognitif/pemetaan-kelompok" class="bg-[#5b5fc7] hover:bg-[#4a4db0] text-white px-6 py-3 rounded-[12px] font-bold flex items-center gap-2 shadow-sm transition-all transform hover:scale-105 active:scale-95">
+                <a href="/guru/dashboard/kognitif/pemetaan-kelompok" class="bg-[#5b5fc7] hover:bg-[#4a4db0] text-white px-6 py-3 rounded-[12px] font-bold flex items-center gap-2 shadow-sm transition-all transform hover:scale-105 active:scale-95">
                     <UsersRound class="size-5" />
                     <span>Buat Kelompok</span>
                 </a>

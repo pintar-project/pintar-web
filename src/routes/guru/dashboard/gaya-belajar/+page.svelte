@@ -88,7 +88,7 @@
             class="absolute inset-x-0 top-0 bottom-0 flex items-center justify-end px-12"
         >
             <a
-                href="/dashboard/kognitif/pemetaan-kelompok"
+                href="/guru/dashboard/kognitif/pemetaan-kelompok"
                 class="bg-[#5b5fc7] hover:bg-[#4a4db0] text-white px-6 py-3 rounded-[12px] font-bold flex items-center gap-2 shadow-sm transition-all transform hover:scale-105 active:scale-95"
             >
                 <UsersRound class="size-5" />

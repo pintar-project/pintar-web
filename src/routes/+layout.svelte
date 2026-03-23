@@ -8,11 +8,11 @@
 	let { children } = $props();
 
 	const queryClient = new QueryClient();
-	const isAuthPage = $derived(page.url.pathname === "/login");
+	const isPublicPage = $derived(String(page.url.pathname) === "/login" || String(page.url.pathname) === "/register" || String(page.url.pathname) === "/");
 </script>
 
 <QueryClientProvider client={queryClient}>
-	{#if isAuthPage}
+	{#if isPublicPage}
 		{@render children?.()}
 	{:else}
 		<Sidebar.Provider>

@@ -24,8 +24,16 @@
 
             authState.user = data;
 
-            goto("/dashboard");
             Cookies.set("access_token", accessToken);
+            Cookies.set("user_role", data.role);
+
+            if (data.role === "admin") {
+                window.location.href = "/admin/manajemen-materi/tambah";
+            } else if (data.role === "guru") {
+                window.location.href = "/guru/dashboard";
+            } else {
+                window.location.href = "/";
+            }
         },
         onError: (error: Error) => {
             console.error("Login error:", error);
