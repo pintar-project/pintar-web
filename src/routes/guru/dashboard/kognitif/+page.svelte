@@ -6,72 +6,32 @@
     import ExternalLinkIcon from "@lucide/svelte/icons/external-link";
     import ChevronDown from "@lucide/svelte/icons/chevron-down";
 
-    const siswaData = [
-        {
-            id: "ID-1243",
-            nama: "Andrian Muhammad",
-            gaya: "Auditori",
-            kognitif: "Tinggi",
-            keaktifan: 87.67,
-            avatar: "https://i.pravatar.cc/150?u=ID-1243",
+    import { createQuery } from "@tanstack/svelte-query";
+    import { siswaService } from "../../../../api/siswaService";
+    import Cookies from "js-cookie";
+
+    const accessToken = Cookies.get("access_token") || "";
+
+    const siswaQuery = createQuery(() => ({
+        queryKey: ["siswa_kognitif"],
+        queryFn: async () => {
+            const res = await siswaService.getAllSiswa(accessToken);
+            return res.data;
         },
-        {
-            id: "ID-1245",
-            nama: "Alya Zahra",
-            gaya: "Auditori",
-            kognitif: "Rendah",
-            keaktifan: 55.72,
-            avatar: "https://i.pravatar.cc/150?u=ID-1245",
-        },
-        {
-            id: "ID-1247",
-            nama: "Aidan Kareem",
-            gaya: "Visual",
-            kognitif: "Sedang",
-            keaktifan: 75.55,
-            avatar: "https://i.pravatar.cc/150?u=ID-1247",
-        },
-        {
-            id: "ID-1255",
-            nama: "Rafif Alvaro",
-            gaya: "Kinestetik",
-            kognitif: "Tinggi",
-            keaktifan: 90.69,
-            avatar: "https://i.pravatar.cc/150?u=ID-1255",
-        },
-        {
-            id: "ID-1262",
-            nama: "Naufal Rayyan",
-            gaya: "Auditori",
-            kognitif: "Sedang",
-            keaktifan: 80.67,
-            avatar: "https://i.pravatar.cc/150?u=ID-1262",
-        },
-        {
-            id: "ID-1266",
-            nama: "Keira Safira",
-            gaya: "Visual",
-            kognitif: "Rendah",
-            keaktifan: 70.57,
-            avatar: "https://i.pravatar.cc/150?u=ID-1266",
-        },
-        {
-            id: "ID-1243",
-            nama: "Zoya Amira",
-            gaya: "Auditori",
-            kognitif: "Rendah",
-            keaktifan: 66.67,
-            avatar: "https://i.pravatar.cc/150?u=ID-1243_2",
-        },
-        {
-            id: "ID-1243",
-            nama: "Faris Zaydan",
-            gaya: "Kinestetik",
-            kognitif: "Sedang",
-            keaktifan: 79.80,
-            avatar: "https://i.pravatar.cc/150?u=ID-1243_3",
-        },
-    ];
+        enabled: !!accessToken,
+    }));
+
+    const mappedSiswaData = $derived(
+        siswaQuery.data?.data.map((s) => ({
+            id: s.id_siswa,
+            nama: s.user.nama_lengkap,
+            gaya: s.gaya_belajar,
+            kognitif: s.kognitif,
+            keaktifan: s.keaktifan,
+            avatar:
+                s.user.avatar_url || `https://i.pravatar.cc/150?u=${s.user.id}`,
+        })) || []
+    );
 </script>
 
 
@@ -112,25 +72,33 @@
                     </tr>
                 </thead>
                 <tbody class="text-[14px]">
-                    {#each siswaData as siswa}
-                        <tr class="border-b border-border last:border-0 hover:bg-gray-50/50 transition-colors group">
-                            <td class="py-4 text-gray-500">{siswa.id}</td>
-                            <td class="py-4">
-                                <div class="flex items-center gap-3">
-                                    <img src={siswa.avatar} alt={siswa.nama} class="size-10 rounded-full bg-gray-100 object-cover border border-border" />
-                                    <span class="font-medium text-gray-900">{siswa.nama}</span>
-                                </div>
-                            </td>
-                            <td class="py-4 font-medium text-gray-900">{siswa.gaya}</td>
-                            <td class="py-4 text-gray-600">{siswa.kognitif}</td>
-                            <td class="py-4 text-gray-600">{siswa.keaktifan}%</td>
-                            <td class="py-4 text-right pr-10">
-                                <button class="px-6 py-2 rounded-full border border-gray-200 text-gray-600 hover:bg-[#5b5fc7] hover:border-[#5b5fc7] hover:text-white transition-all text-[12px] font-medium">
-                                    Detail
-                                </button>
-                            </td>
-                        </tr>
-                    {/each}
+                    {#if siswaQuery.isPending}
+                        {#each Array(5) as _}
+                            <tr class="border-b border-border animate-pulse">
+                                <td class="py-4 bg-gray-50 h-10 rounded-md" colspan="6"></td>
+                            </tr>
+                        {/each}
+                    {:else}
+                        {#each mappedSiswaData as siswa}
+                            <tr class="border-b border-border last:border-0 hover:bg-gray-50/50 transition-colors group">
+                                <td class="py-4 text-gray-500">{siswa.id}</td>
+                                <td class="py-4">
+                                    <div class="flex items-center gap-3">
+                                        <img src={siswa.avatar} alt={siswa.nama} class="size-10 rounded-full bg-gray-100 object-cover border border-border" />
+                                        <span class="font-medium text-gray-900">{siswa.nama}</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 font-medium text-gray-900">{siswa.gaya}</td>
+                                <td class="py-4 text-gray-600">{siswa.kognitif}</td>
+                                <td class="py-4 text-gray-600">{siswa.keaktifan}{typeof siswa.keaktifan === "number" ? "%" : ""}</td>
+                                <td class="py-4 text-right pr-10">
+                                    <button class="px-6 py-2 rounded-full border border-gray-200 text-gray-600 hover:bg-[#5b5fc7] hover:border-[#5b5fc7] hover:text-white transition-all text-[12px] font-medium">
+                                        Detail
+                                    </button>
+                                </td>
+                            </tr>
+                        {/each}
+                    {/if}
                 </tbody>
             </table>
         </ScrollArea>

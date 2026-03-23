@@ -11,7 +11,6 @@
     import { createMutation } from "@tanstack/svelte-query";
     import { createForm } from "svelte-forms-lib";
     import { authService } from "../../api/authService";
-    import { goto } from "$app/navigation";
 
     import Cookies from "js-cookie";
     import { authState } from "$lib/state/auth.svelte";

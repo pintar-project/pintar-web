@@ -5,8 +5,22 @@
     import X from "@lucide/svelte/icons/x";
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import { classesState } from "$lib/state/classes.svelte";
+    import { createQuery } from "@tanstack/svelte-query";
+    import { tahunAjaranService } from "../../../api/tahunAjaranService";
+    import Cookies from "js-cookie";
 
     let { children } = $props();
+
+    const accessToken = Cookies.get("access_token") || "";
+
+    const tahunAjaranQuery = createQuery(() => ({
+        queryKey: ["tahun-ajaran"],
+        queryFn: async () => {
+            const res = await tahunAjaranService.getTahunAjaran(accessToken);
+            return res.data.data;
+        },
+        enabled: !!accessToken,
+    }));
 
     const isSubPage = $derived(
         page.url.pathname.includes("/kognitif") ||
@@ -51,7 +65,7 @@
                             <p class="text-[13px] text-[#595959]">
                                 Tahun Ajaran: <span
                                     class="text-[#000000] font-semibold"
-                                    >2026/2027</span
+                                    >{tahunAjaranQuery.data?.nama || "..."}</span
                                 >
                             </p>
                             <Separator
@@ -61,7 +75,7 @@
                             <p class="text-[13px] text-[#595959]">
                                 Status Akademik: <span
                                     class="text-[#000000] font-semibold"
-                                    >Semester 1</span
+                                    >Semester {tahunAjaranQuery.data?.semester || "..."}</span
                                 >
                             </p>
                             {#if title !== "Manajemen Kelas" && title !== "Monitor Tugas" && classesState.list.length > 0}

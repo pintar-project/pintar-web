@@ -7,24 +7,47 @@
     import ChevronRight from "@lucide/svelte/icons/chevron-right";
     import Copy from "@lucide/svelte/icons/copy";
     import Mascot from "$lib/assets/Group.png";
-    import { classesState, type Class } from "$lib/state/classes.svelte";
+    import { createForm } from "svelte-forms-lib";
+    import { createMutation, useQueryClient } from "@tanstack/svelte-query";
+    import { kelasService } from "../../../api/kelasService";
+    import Cookies from "js-cookie";
 
     let { open = $bindable(false) } = $props();
     let isSuccess = $state(false);
-    let name = $state("");
-    let description = $state("");
-    let createdClass = $state<Class | null>(null);
+    let createdClass = $state<Kelas | null>(null);
 
-    function handleContinue() {
-        if (!name) return;
-        createdClass = classesState.addClass({ name, description });
-        isSuccess = true;
-    }
+    const queryClient = useQueryClient();
+    const accessToken = Cookies.get("access_token") || "";
+
+    const mutation = createMutation(() => ({
+        mutationFn: (values: { nama: string; deskripsi: string }) =>
+            kelasService.createKelas(accessToken, values),
+        onSuccess: (res) => {
+            createdClass = res.data.data;
+            isSuccess = true;
+            queryClient.invalidateQueries({ queryKey: ["kelas"] });
+        },
+    }));
+
+    const {
+        form,
+        errors,
+        handleChange,
+        handleSubmit,
+        handleReset: resetForm,
+    } = createForm({
+        initialValues: {
+            nama: "",
+            deskripsi: "",
+        },
+        onSubmit: (values) => {
+            mutation.mutate(values);
+        },
+    });
 
     function handleReset() {
         isSuccess = false;
-        name = "";
-        description = "";
+        resetForm();
     }
 
     function handleClose() {
@@ -49,40 +72,59 @@
             <div class="grid gap-6 py-4">
                 <div class="grid gap-3">
                     <Label
-                        for="name"
+                        for="nama"
                         class="text-[16px] font-semibold text-[#595959]"
                         >Nama Kelas</Label
                     >
                     <Input
-                        id="name"
-                        bind:value={name}
+                        id="nama"
+                        name="nama"
+                        onchange={handleChange}
+                        bind:value={$form.nama}
                         placeholder="Contoh: Sosiologi X IPS 1"
                         class="h-[56px] px-4 rounded-[12px] border-[#d9d9d9] text-[16px]"
                     />
+                    {#if $errors.nama}
+                        <p class="text-sm text-red-500">{$errors.nama}</p>
+                    {/if}
                 </div>
                 <div class="grid gap-3">
                     <Label
-                        for="description"
+                        for="deskripsi"
                         class="text-[16px] font-semibold text-[#595959]"
                         >Deskripsi Mata Pelajaran</Label
                     >
                     <div class="relative">
                         <Textarea
-                            id="description"
-                            bind:value={description}
+                            id="deskripsi"
+                            name="deskripsi"
+                            onchange={handleChange}
+                            bind:value={$form.deskripsi}
                             class="min-h-[160px] p-4 rounded-[12px] border-[#d9d9d9] text-[16px] resize-none"
                         />
                     </div>
+                    {#if $errors.deskripsi}
+                        <p class="text-sm text-red-500">{$errors.deskripsi}</p>
+                    {/if}
                 </div>
             </div>
             <Dialog.Footer>
                 <Button
-                    onclick={handleContinue}
+                    onclick={handleSubmit}
+                    disabled={mutation.isPending}
                     type="submit"
                     class="w-full bg-[#5b5fc7] hover:bg-[#4a4db0] text-white h-[56px] rounded-[12px] text-[16px] font-semibold flex items-center justify-center gap-2"
                 >
-                    <ChevronRight class="size-5" />
-                    <span>Lanjutkan</span>
+                    {#if mutation.isPending}
+                        <span class="animate-spin mr-2">...</span>
+                    {:else}
+                        <ChevronRight class="size-5" />
+                    {/if}
+                    <span
+                        >{mutation.isPending
+                            ? "Memproses..."
+                            : "Lanjutkan"}</span
+                    >
                 </Button>
             </Dialog.Footer>
         {:else}
@@ -104,7 +146,7 @@
                     <Copy class="size-4 text-[#8c8c8c]" />
                     <span
                         class="text-[18px] font-bold text-[#8c8c8c] tracking-wider"
-                        >{createdClass?.code || ""}</span
+                        >{createdClass?.kode_unik || ""}</span
                     >
                 </div>
 

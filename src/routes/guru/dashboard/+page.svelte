@@ -13,60 +13,86 @@
     import { Button } from "$lib/components/ui/button";
     import BuatKelasIcon from "$lib/assets/icon-wrapper.png";
     import CreateClassDialog from "$lib/components/dashboard/CreateClassDialog.svelte";
+    import { createQuery } from "@tanstack/svelte-query";
+    import { siswaService } from "../../../api/siswaService";
+    import Cookies from "js-cookie";
 
-    import dashboardData from "$lib/json/data_dasbor_analitik_XI_IPS_2.json";
-
-    const hasClasses = true;
     let openCreateClass = $state(false);
 
-    const stats = dashboardData.statistik_pemetaan;
-    const header = dashboardData.header_kelas;
+    const accessToken = Cookies.get("access_token") || "";
 
-    const MAX_VALUE = header.jumlah_siswa;
+    const siswaQuery = createQuery(() => ({
+        queryKey: ["siswa_dashboard_stats"],
+        queryFn: async () => {
+            const res = await siswaService.getAllSiswa(accessToken);
+            return res.data;
+        },
+        enabled: !!accessToken,
+    }));
 
-    const kognitifData = [
-        { label: "Tinggi", value: stats.kognitif.tinggi },
-        { label: "Sedang", value: stats.kognitif.sedang },
-        { label: "Rendah", value: stats.kognitif.rendah },
-    ];
+    const hasClasses = $derived(siswaQuery.isPending || siswaQuery.isSuccess);
 
-    const totalStudents = header.jumlah_siswa;
-    const gayaBelajarLegend = [
+    const stats = $derived(
+        siswaQuery.data?.statistik_pemetaan || {
+            kognitif: {
+                jumlah: { tinggi: 0, sedang: 0, rendah: 0 },
+                persentase: { tinggi: 0, sedang: 0, rendah: 0 },
+            },
+            gaya_belajar: {
+                jumlah: { auditori: 0, visual: 0, kinestetik: 0 },
+                persentase: { auditori: 0, visual: 0, kinestetik: 0 },
+            },
+            jumlah_siswa: 0,
+        },
+    );
+
+    const header = $derived(
+        siswaQuery.data?.statistik_pemetaan.jumlah_siswa || 0,
+    );
+
+    const MAX_VALUE = $derived(header || 1);
+
+    const kognitifData = $derived([
+        { label: "Tinggi", value: stats.kognitif.jumlah.tinggi },
+        { label: "Sedang", value: stats.kognitif.jumlah.sedang },
+        { label: "Rendah", value: stats.kognitif.jumlah.rendah },
+    ]);
+
+    const gayaBelajarLegend = $derived([
         {
             label: "Auditori",
-            pct: Math.round(
-                (stats.gaya_belajar.auditori / totalStudents) * 100,
-            ),
+            pct: stats.gaya_belajar.persentase.auditori || 0,
             color: "#5b5fc7",
         },
         {
             label: "Visual",
-            pct: Math.round((stats.gaya_belajar.visual / totalStudents) * 100),
+            pct: stats.gaya_belajar.persentase.visual || 0,
             color: "#e05252",
         },
         {
             label: "Kinestetik",
-            pct: Math.round(
-                (stats.gaya_belajar.kinestetik / totalStudents) * 100,
-            ),
+            pct: stats.gaya_belajar.persentase.kinestetik || 0,
             color: "#d1d5db",
         },
-    ];
+    ]);
 
-    const siswaData = dashboardData.data_siswa.map((s: any) => ({
-        id: s.id_siswa,
-        nama: s.nama,
-        gaya: s.gaya_belajar,
-        kognitif: s.kognitif,
-        keaktifan: parseFloat(s.keaktifan),
-        avatar: `https://i.pravatar.cc/150?u=${s.id_siswa}`,
-    }));
+    const mappedSiswaData = $derived(
+        siswaQuery.data?.data.map((s) => ({
+            id: s.id_siswa,
+            nama: s.user.nama_lengkap,
+            gaya: s.gaya_belajar,
+            kognitif: s.kognitif,
+            keaktifan: s.keaktifan,
+            avatar:
+                s.user.avatar_url || `https://i.pravatar.cc/150?u=${s.user.id}`,
+        })) || [],
+    );
 
-    const options: ApexOptions = {
+    const options: ApexOptions = $derived({
         series: [
-            stats.gaya_belajar.auditori,
-            stats.gaya_belajar.visual,
-            stats.gaya_belajar.kinestetik,
+            stats.gaya_belajar.jumlah.auditori,
+            stats.gaya_belajar.jumlah.visual,
+            stats.gaya_belajar.jumlah.kinestetik,
         ],
         colors: ["#5b5fc7", "#e05252", "#d1d5db"],
         chart: {
@@ -91,13 +117,13 @@
         legend: {
             show: false,
         },
-    };
+    });
 </script>
 
 <div
     class={hasClasses
         ? "pb-10"
-        : "flex flex-col items-center justify-center min-h-[60vh] gap-8"}
+        : "flex flex-col h-full min-h-[80vh] p-8"}
 >
     {#if hasClasses}
         <img
@@ -128,7 +154,8 @@
                         <div class="flex flex-col gap-1">
                             <div class="flex items-center gap-3">
                                 <Progress
-                                    value={(item.value / MAX_VALUE) * 100}
+                                    value={item.value}
+                                    max={MAX_VALUE}
                                     class="h-[22px] flex-1 bg-gray-100 [&>div]:bg-[#5b5fc7]/80 rounded-md"
                                 />
                                 <span
@@ -173,7 +200,11 @@
 
                 <div class="flex items-center gap-6">
                     <div class="w-[200px] shrink-0">
-                        <Chart {options} />
+                        {#if siswaQuery.isSuccess && (stats.gaya_belajar.jumlah.auditori > 0 || stats.gaya_belajar.jumlah.visual > 0 || stats.gaya_belajar.jumlah.kinestetik > 0)}
+                            <Chart {options} />
+                        {:else}
+                            <div class="h-[200px] w-[200px] rounded-full bg-gray-100 animate-pulse"></div>
+                        {/if}
                     </div>
 
                     <div class="flex flex-col gap-4">
@@ -276,81 +307,98 @@
                         </tr>
                     </thead>
                     <tbody class="text-[14px]">
-                        {#each siswaData as siswa}
-                            <tr
-                                class="border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors group"
-                            >
-                                <td class="py-2 text-gray-500">{siswa.id}</td>
-                                <td class="py-2">
-                                    <div class="flex items-center gap-3">
-                                        <img
-                                            src={siswa.avatar}
-                                            alt={siswa.nama}
-                                            class="size-8 rounded-full bg-gray-100 object-cover"
-                                        />
-                                        <span class="font-medium text-gray-900"
-                                            >{siswa.nama}</span
-                                        >
-                                    </div>
-                                </td>
-                                <td class="py-2 font-medium text-gray-900"
-                                    >{siswa.gaya}</td
+                        {#if siswaQuery.isPending}
+                            {#each Array(5) as _}
+                                <tr
+                                    class="border-b border-gray-100 animate-pulse"
                                 >
-                                <td class="py-2 text-gray-600"
-                                    >{siswa.kognitif}</td
+                                    <td
+                                        class="py-4 bg-gray-50 h-8 rounded-md"
+                                        colspan="6"
+                                    ></td>
+                                </tr>
+                            {/each}
+                        {:else}
+                            {#each mappedSiswaData as siswa}
+                                <tr
+                                    class="border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors group"
                                 >
-                                <td class="py-2 text-gray-600"
-                                    >{siswa.keaktifan}%</td
-                                >
-                                <td class="py-2 text-right pr-10">
-                                    <button
-                                        class="px-5 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:bg-[#5b5fc7] hover:border-[#5b5fc7] hover:text-white transition-all text-[12px] font-medium"
+                                    <td class="py-2 text-gray-500"
+                                        >{siswa.id}</td
                                     >
-                                        Detail
-                                    </button>
-                                </td>
-                            </tr>
-                        {/each}
+                                    <td class="py-2">
+                                        <div class="flex items-center gap-3">
+                                            <img
+                                                src={siswa.avatar}
+                                                alt={siswa.nama}
+                                                class="size-8 rounded-full bg-gray-100 object-cover"
+                                            />
+                                            <span
+                                                class="font-medium text-gray-900"
+                                                >{siswa.nama}</span
+                                            >
+                                        </div>
+                                    </td>
+                                    <td class="py-2 font-medium text-gray-900"
+                                        >{siswa.gaya}</td
+                                    >
+                                    <td class="py-2 text-gray-600"
+                                        >{siswa.kognitif}</td
+                                    >
+                                    <td class="py-2 text-gray-600"
+                                        >{siswa.keaktifan}{typeof siswa.keaktifan ===
+                                        "number"
+                                            ? "%"
+                                            : ""}</td
+                                    >
+
+                                    <td class="py-2 text-right pr-10">
+                                        <button
+                                            class="px-5 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:bg-[#5b5fc7] hover:border-[#5b5fc7] hover:text-white transition-all text-[12px] font-medium"
+                                        >
+                                            Detail
+                                        </button>
+                                    </td>
+                                </tr>
+                            {/each}
+                        {/if}
                     </tbody>
                 </table>
             </ScrollArea>
         </div>
     {:else}
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <div class="mt-[30px] relative z-50">
-                <Button
-                    onclick={() => {
-                        openCreateClass = true;
-                    }}
-                    class="bg-[#5b5fc7] hover:bg-[#4a4db0] text-white rounded-[8px] flex items-center gap-[10px]"
-                >
-                    <img
-                        src={BuatKelasIcon}
-                        alt=""
-                        class="size-4 object-contain"
-                    />
-                    <span>Buat Kelas</span>
-                </Button>
-            </div>
-
-            <CreateClassDialog bind:open={openCreateClass} />
-
-            <div class="flex flex-col items-center justify-center -mt-10">
+        <div class="relative z-50 self-start">
+            <Button
+                onclick={() => {
+                    openCreateClass = true;
+                }}
+                class="bg-[#5b5fc7] hover:bg-[#4a4db0] text-white rounded-[8px] flex items-center gap-[10px]"
+            >
                 <img
-                    src={Ilustration}
-                    alt="Empty State"
-                    class="w-[400px] h-auto"
+                    src={BuatKelasIcon}
+                    alt=""
+                    class="size-4 object-contain"
                 />
-                <div class="text-center mt-[30px] space-y-2">
-                    <h2 class="text-[24px] font-bold text-[#252424]">
-                        Mari Siapkan Kelas Pertama Anda
-                    </h2>
-                    <p class="text-[18px] text-[#262626] max-w-[550px]">
-                        Tambahkan kelas dan unggah materi pembelajaran untuk
-                        mulai mengatur pengalaman belajar siswa dengan lebih
-                        terorganisir.
-                    </p>
-                </div>
+                <span>Buat Kelas</span>
+            </Button>
+        </div>
+
+        <CreateClassDialog bind:open={openCreateClass} />
+
+        <div class="flex-1 flex flex-col items-center justify-center gap-6 mt-10">
+            <img
+                src={Ilustration}
+                alt="Empty State"
+                class="w-[450px] h-auto object-contain"
+            />
+            <div class="text-center space-y-3">
+                <h2 class="text-[22px] font-bold text-[#252424]">
+                    Mari Siapkan Kelas Pertama Anda
+                </h2>
+                <p class="text-[15px] font-medium text-gray-600 max-w-[500px] leading-relaxed mx-auto">
+                    Tambahkan kelas dan unggah materi pembelajaran untuk mulai
+                    mengatur pengalaman belajar siswa dengan lebih terorganisir.
+                </p>
             </div>
         </div>
     {/if}
