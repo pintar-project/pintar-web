@@ -25,7 +25,7 @@
     >
         <Button
             variant="outline"
-            class="bg-[#5b5fc7] hover:bg-[#4a4db0] text-white hover:text-white cursor-pointer border-none h-8 px-3 rounded-[8px] text-[12px] font-bold transition-all active:scale-95"
+            class="bg-[#5b5fc7] hover:bg-[#4a4db0] text-white hover:text-white cursor-pointer border-none h-8 px-3 rounded-[8px] text-[12px] font-bold transition-all"
         >
             Lihat Tugas
         </Button>

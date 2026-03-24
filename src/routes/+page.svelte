@@ -48,7 +48,7 @@
             >
             <a
                 href={dashboardPath}
-                class="inline-flex items-center justify-center bg-[#5b5fc7] hover:bg-[#4a4ea3] text-white rounded-full px-7 h-11 text-[15px] font-semibold transition-all hover:shadow-lg hover:shadow-indigo-500/25"
+                class="inline-flex items-center justify-center bg-[#5b5fc7] hover:bg-[#4a4ea3] text-white rounded-full px-7 h-11 text-[15px] font-semibold transition-all"
             >
                 Buka Dashboard
             </a>
@@ -60,7 +60,7 @@
             >
             <a
                 href="/login"
-                class="inline-flex items-center justify-center bg-[#5b5fc7] hover:bg-[#4a4ea3] text-white rounded-full px-7 h-11 text-[15px] font-semibold transition-all hover:shadow-lg hover:shadow-indigo-500/25"
+                class="inline-flex items-center justify-center bg-[#5b5fc7] hover:bg-[#4a4ea3] text-white rounded-full px-7 h-11 text-[15px] font-semibold transition-all"
             >
                 Mulai Gratis
             </a>
@@ -113,19 +113,19 @@
                     {#if isAuthenticated}
                     <a
                         href={dashboardPath}
-                        class="inline-flex items-center justify-center bg-[#5b5fc7] hover:bg-[#4a4ea3] text-white rounded-full px-8 h-14 text-base font-semibold w-full sm:w-auto shadow-xl shadow-indigo-500/20 transition-all gap-2 group"
+                        class="inline-flex items-center justify-center bg-[#5b5fc7] hover:bg-[#4a4ea3] text-white rounded-full px-8 h-14 text-base font-semibold w-full sm:w-auto transition-all gap-2 group"
                     >
                         Buka Dashboard <ArrowRight
-                            class="size-4 group-hover:translate-x-1 transition-transform"
+                            class="size-4"
                         />
                     </a>
                     {:else}
                     <a
                         href="/login"
-                        class="inline-flex items-center justify-center bg-[#5b5fc7] hover:bg-[#4a4ea3] text-white rounded-full px-8 h-14 text-base font-semibold w-full sm:w-auto shadow-xl shadow-indigo-500/20 transition-all gap-2 group"
+                        class="inline-flex items-center justify-center bg-[#5b5fc7] hover:bg-[#4a4ea3] text-white rounded-full px-8 h-14 text-base font-semibold w-full sm:w-auto transition-all gap-2 group"
                     >
                         Coba Pintar Sekarang <ArrowRight
-                            class="size-4 group-hover:translate-x-1 transition-transform"
+                            class="size-4"
                         />
                     </a>
                     {/if}
@@ -172,7 +172,7 @@
                 <img
                     src={Ilustration}
                     alt="Dashboard Illustration"
-                    class="w-[90%] md:w-[80%] lg:w-[95%] drop-shadow-2xl animate-[float_6s_ease-in-out_infinite]"
+                    class="w-[90%] md:w-[80%] lg:w-[95%]"
                 />
             </div>
         </div>
@@ -199,10 +199,10 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
                 <div
-                    class="bg-white rounded-[24px] p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+                    class="bg-white rounded-[24px] p-8 border border-gray-100 transition-all duration-300 group"
                 >
                     <div
-                        class="w-16 h-16 rounded-[16px] bg-blue-50 text-blue-600 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300"
+                        class="w-16 h-16 rounded-[16px] bg-blue-50 text-blue-600 flex items-center justify-center mb-8"
                     >
                         <BarChart3 class="size-8" />
                     </div>
@@ -222,7 +222,7 @@
 
                 
                 <div
-                    class="bg-white rounded-[24px] p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+                    class="bg-white rounded-[24px] p-8 border border-gray-100 transition-all duration-300 group"
                 >
                     <div
                         class="w-16 h-16 rounded-[16px] bg-[#f2f2fa] text-[#5b5fc7] flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300"
@@ -245,7 +245,7 @@
 
                 
                 <div
-                    class="bg-white rounded-[24px] p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+                    class="bg-white rounded-[24px] p-8 border border-gray-100 transition-all duration-300 group"
                 >
                     <div
                         class="w-16 h-16 rounded-[16px] bg-purple-50 text-purple-600 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300"
@@ -289,14 +289,14 @@
                 {#if isAuthenticated}
                 <a
                     href={dashboardPath}
-                    class="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-[#111827] rounded-full px-10 h-14 text-base font-bold transition-transform hover:scale-105 shadow-xl relative z-10"
+                    class="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-[#111827] rounded-full px-10 h-14 text-base font-bold relative z-10"
                 >
                     Masuk ke Dashboard
                 </a>
                 {:else}
                 <a
                     href="/login"
-                    class="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-[#111827] rounded-full px-10 h-14 text-base font-bold transition-transform hover:scale-105 shadow-xl relative z-10"
+                    class="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-[#111827] rounded-full px-10 h-14 text-base font-bold relative z-10"
                 >
                     Coba Gratis Sekarang
                 </a>
@@ -315,15 +315,15 @@
                 alt="Pintar"
                 class="h-10 grayscale opacity-40 mb-8"
             />
-            <!-- svelte-ignore a11y_invalid_attribute -->
+            
             <div
                 class="flex items-center gap-6 mb-8 text-sm font-medium text-gray-500"
             >
-                <!-- svelte-ignore a11y_invalid_attribute -->
+                
                 <a href="#" class="hover:text-[#5b5fc7] transition-colors"
                     >Tentang Kami</a
                 >
-                <!-- svelte-ignore a11y_invalid_attribute -->
+                
                 <a href="#" class="hover:text-[#5b5fc7] transition-colors"
                     >Syarat & Ketentuan</a
                 >

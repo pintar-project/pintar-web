@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { fly } from "svelte/transition";
+    import { fade } from "svelte/transition";
     import UsersRound from "@lucide/svelte/icons/users-round";
     import FileDown from "@lucide/svelte/icons/file-down";
     import Filter from "@lucide/svelte/icons/filter";
@@ -151,8 +151,8 @@
 
     {#if kognitifState.showResults}
     <div
-        class="bg-white rounded-[24px] border border-border shadow-sm p-8 space-y-8"
-        in:fly={{ y: 20, duration: 400 }}
+        class="bg-white rounded-[24px] border border-border p-8 space-y-8"
+        in:fade={{ duration: 400 }}
     >
         <div class="flex items-center justify-between">
             <div

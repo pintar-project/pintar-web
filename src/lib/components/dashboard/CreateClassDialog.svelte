@@ -5,6 +5,7 @@
     import { Label } from "$lib/components/ui/label/index";
     import { Textarea } from "$lib/components/ui/textarea/index";
     import ChevronRight from "@lucide/svelte/icons/chevron-right";
+    import ChevronDown from "@lucide/svelte/icons/chevron-down";
     import Copy from "@lucide/svelte/icons/copy";
     import Mascot from "$lib/assets/Group.png";
     import { createForm } from "svelte-forms-lib";
@@ -81,13 +82,14 @@
                         name="nama"
                         onchange={handleChange}
                         bind:value={$form.nama}
-                        placeholder="Contoh: Sosiologi X IPS 1"
+                        placeholder="Contoh: XI IPS 2"
                         class="h-[56px] px-4 rounded-[12px] border-[#d9d9d9] text-[16px]"
                     />
                     {#if $errors.nama}
                         <p class="text-sm text-red-500">{$errors.nama}</p>
                     {/if}
                 </div>
+
                 <div class="grid gap-3">
                     <Label
                         for="deskripsi"

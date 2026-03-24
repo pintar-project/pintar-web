@@ -26,7 +26,7 @@
 </script>
 
 <div
-    class="bg-white rounded-[20px] border border-[#f0f0f0] overflow-hidden flex flex-col shadow-sm transition-all hover:shadow-md cursor-pointer group"
+    class="bg-white rounded-[20px] border border-[#f0f0f0] overflow-hidden flex flex-col transition-all cursor-pointer group"
     style="--card-hover-color: {hoverColor};"
 >
     <div

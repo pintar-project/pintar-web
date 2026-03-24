@@ -68,11 +68,11 @@
 
         <div
             class="relative z-10"
-            in:fly={{ x: -20, duration: 1000, delay: 100 }}
+            in:fade={{ duration: 1000, delay: 100 }}
         >
             <div class="flex items-center gap-3">
                 <div
-                    class="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-lg"
+                    class="w-11 h-11 bg-white rounded-xl flex items-center justify-center"
                 >
                     <span
                         class="text-[#5b5fc7] font-black text-2xl tracking-tighter"
@@ -85,7 +85,7 @@
 
         <div
             class="relative z-10 flex flex-col gap-8 max-w-[480px] my-auto"
-            in:fly={{ y: 20, duration: 1000, delay: 300 }}
+            in:fade={{ duration: 1000, delay: 300 }}
         >
             <h1
                 class="text-[44px] leading-[1.15] font-bold tracking-tight text-white"
@@ -158,7 +158,7 @@
             in:fade={{ duration: 800 }}
         >
             <div
-                class="w-10 h-10 bg-[#5b5fc7] rounded-xl flex items-center justify-center shadow-md"
+                class="w-10 h-10 bg-[#5b5fc7] rounded-xl flex items-center justify-center"
             >
                 <span class="text-white font-black text-[22px] tracking-tighter"
                     >P</span
@@ -171,7 +171,7 @@
 
         <div
             class="w-full max-w-[420px] flex flex-col gap-8 relative z-10"
-            in:fly={{ y: 20, duration: 800, delay: 200 }}
+            in:fade={{ duration: 800, delay: 200 }}
         >
             <div class="flex flex-col gap-2.5">
                 <h2 class="text-[32px] font-bold tracking-tight text-[#111827]">
@@ -186,7 +186,7 @@
             <div class="flex flex-col" in:fade={{ duration: 600, delay: 400 }}>
                 <Button
                     variant="outline"
-                    class="h-12 rounded-[12px] border-[#e5e7eb] bg-white hover:bg-gray-50 flex items-center justify-center gap-3 font-semibold text-[#4b5563] transition-all shadow-sm"
+                    class="h-12 rounded-[12px] border-[#e5e7eb] bg-white hover:bg-gray-50 flex items-center justify-center gap-3 font-semibold text-[#4b5563] transition-all"
                 >
                     <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24">
                         <path
@@ -226,7 +226,7 @@
                 <div class="flex flex-col gap-5">
                     <div
                         class="flex flex-col gap-2.5"
-                        in:fly={{ x: -10, duration: 600, delay: 600 }}
+                        in:fade={{ duration: 600, delay: 600 }}
                     >
                         <Label
                             for="email"
@@ -246,7 +246,7 @@
                                 placeholder="nama@email.com"
                                 value={$form.email}
                                 oninput={handleChange}
-                                class="h-12 pl-11 bg-white border-[#d1d5db] hover:border-[#9ca3af] focus-visible:ring-[3px] focus-visible:ring-[#5b5fc7]/15 focus-visible:border-[#5b5fc7] rounded-[12px] text-[15px] font-medium text-[#111827] placeholder:text-[#9ca3af] placeholder:font-normal transition-all shadow-sm"
+                                class="h-12 pl-11 bg-white border-[#d1d5db] hover:border-[#9ca3af] focus-visible:ring-[3px] focus-visible:ring-[#5b5fc7]/15 focus-visible:border-[#5b5fc7] rounded-[12px] text-[15px] font-medium text-[#111827] placeholder:text-[#9ca3af] placeholder:font-normal transition-all"
                                 required
                             />
                         </div>
@@ -259,7 +259,7 @@
 
                     <div
                         class="flex flex-col gap-2.5"
-                        in:fly={{ x: -10, duration: 600, delay: 700 }}
+                        in:fade={{ duration: 600, delay: 700 }}
                     >
                         <div class="flex justify-between items-center">
                             <Label
@@ -286,7 +286,7 @@
                                 placeholder="••••••••"
                                 value={$form.password}
                                 oninput={handleChange}
-                                class="h-12 pl-11 bg-white border-[#d1d5db] hover:border-[#9ca3af] focus-visible:ring-[3px] focus-visible:ring-[#5b5fc7]/15 focus-visible:border-[#5b5fc7] rounded-[12px] text-[15px] font-medium text-[#111827] placeholder:text-[#9ca3af] placeholder:font-normal transition-all shadow-sm"
+                                class="h-12 pl-11 bg-white border-[#d1d5db] hover:border-[#9ca3af] focus-visible:ring-[3px] focus-visible:ring-[#5b5fc7]/15 focus-visible:border-[#5b5fc7] rounded-[12px] text-[15px] font-medium text-[#111827] placeholder:text-[#9ca3af] placeholder:font-normal transition-all"
                                 required
                             />
                         </div>
@@ -302,7 +302,7 @@
                     <Button
                         type="submit"
                         disabled={isLoading}
-                        class="w-full h-12 bg-[#5b5fc7] hover:bg-[#4a4db0] text-white font-bold text-[15px] rounded-[12px] shadow-[0_4px_12px_rgba(91,95,199,0.25)] hover:shadow-[0_6px_16px_rgba(91,95,199,0.35)] transition-all flex items-center justify-center gap-2 group/btn"
+                        class="w-full h-12 bg-[#5b5fc7] hover:bg-[#4a4db0] text-white font-bold text-[15px] rounded-[12px] transition-all flex items-center justify-center gap-2 group/btn"
                     >
                         {#if isLoading}
                             <div
@@ -313,7 +313,7 @@
                             <ArrowRight
                                 size={18}
                                 strokeWidth={2.5}
-                                class="group-hover/btn:translate-x-1.5 transition-transform"
+                                class="group-hover/btn:opacity-80 transition-opacity"
                             />
                         {/if}
                     </Button>

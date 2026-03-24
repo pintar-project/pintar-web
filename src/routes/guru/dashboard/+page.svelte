@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { page } from "$app/state";
     import Separator from "$lib/components/ui/separator/separator.svelte";
     import LogoBuku from "$lib/assets/banner (1).png";
     import Shape from "$lib/assets/Shape.png";
@@ -15,22 +16,33 @@
     import CreateClassDialog from "$lib/components/dashboard/CreateClassDialog.svelte";
     import { createQuery } from "@tanstack/svelte-query";
     import { siswaService } from "../../../api/siswaService";
+    import { browser } from "$app/environment";
     import Cookies from "js-cookie";
+    import { getContext } from "svelte";
 
     let openCreateClass = $state(false);
 
-    const accessToken = Cookies.get("access_token") || "";
+    const kelasQuery: any = getContext("kelasQuery");
+
+    const activeKodeKunik = $derived(
+        page.url.searchParams.get("kelas") ||
+            kelasQuery.data?.data?.[0]?.kode_unik,
+    );
 
     const siswaQuery = createQuery(() => ({
-        queryKey: ["siswa_dashboard_stats"],
+        queryKey: ["siswa_dashboard_stats", activeKodeKunik],
         queryFn: async () => {
-            const res = await siswaService.getAllSiswa(accessToken);
+            const token = Cookies.get("access_token") || "";
+            const res = await siswaService.getAllSiswa(
+                token,
+                activeKodeKunik || "",
+            );
             return res.data;
         },
-        enabled: !!accessToken,
+        enabled: browser && !!activeKodeKunik,
     }));
 
-    const hasClasses = $derived(siswaQuery.isPending || siswaQuery.isSuccess);
+    const hasClasses = $derived((kelasQuery.data?.data?.length || 0) > 0);
 
     const stats = $derived(
         siswaQuery.data?.statistik_pemetaan || {
@@ -77,7 +89,7 @@
     ]);
 
     const mappedSiswaData = $derived(
-        siswaQuery.data?.data.map((s) => ({
+        siswaQuery.data?.data?.map((s) => ({
             id: s.id_siswa,
             nama: s.user.nama_lengkap,
             gaya: s.gaya_belajar,
@@ -200,10 +212,14 @@
 
                 <div class="flex items-center gap-6">
                     <div class="w-[200px] shrink-0">
-                        {#if siswaQuery.isSuccess && (stats.gaya_belajar.jumlah.auditori > 0 || stats.gaya_belajar.jumlah.visual > 0 || stats.gaya_belajar.jumlah.kinestetik > 0)}
+                        {#if siswaQuery.isLoading}
+                            <div class="h-[200px] w-[200px] rounded-full bg-gray-100 animate-pulse"></div>
+                        {:else if siswaQuery.isSuccess && (stats.gaya_belajar.jumlah.auditori > 0 || stats.gaya_belajar.jumlah.visual > 0 || stats.gaya_belajar.jumlah.kinestetik > 0)}
                             <Chart {options} />
                         {:else}
-                            <div class="h-[200px] w-[200px] rounded-full bg-gray-100 animate-pulse"></div>
+                            <div class="h-[200px] w-[200px] rounded-full bg-gray-50 flex items-center justify-center text-gray-400 text-[10px] text-center px-4">
+                                Data Belum Tersedia
+                            </div>
                         {/if}
                     </div>
 
@@ -318,6 +334,12 @@
                                     ></td>
                                 </tr>
                             {/each}
+                        {:else if mappedSiswaData.length === 0}
+                            <tr>
+                                <td colspan="6" class="py-10 text-center text-gray-500">
+                                    Belum ada siswa di kelas ini.
+                                </td>
+                            </tr>
                         {:else}
                             {#each mappedSiswaData as siswa}
                                 <tr

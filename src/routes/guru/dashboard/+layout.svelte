@@ -4,23 +4,67 @@
     import ArrowDownIcon from "@lucide/svelte/icons/arrow-down";
     import X from "@lucide/svelte/icons/x";
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-    import { classesState } from "$lib/state/classes.svelte";
     import { createQuery } from "@tanstack/svelte-query";
     import { tahunAjaranService } from "../../../api/tahunAjaranService";
+    import { kelasService } from "../../../api/kelasService";
+    import { goto } from "$app/navigation";
+    import { browser } from "$app/environment";
     import Cookies from "js-cookie";
+    import { setContext } from "svelte";
 
     let { children } = $props();
-
-    const accessToken = Cookies.get("access_token") || "";
+    let dropdownOpen = $state(false);
 
     const tahunAjaranQuery = createQuery(() => ({
         queryKey: ["tahun-ajaran"],
         queryFn: async () => {
-            const res = await tahunAjaranService.getTahunAjaran(accessToken);
+            const token = Cookies.get("access_token") || "";
+            const res = await tahunAjaranService.getTahunAjaran(token);
             return res.data.data;
         },
-        enabled: !!accessToken,
+        enabled: browser,
     }));
+
+    const kelasQuery = createQuery(() => ({
+        queryKey: ["kelas"],
+        queryFn: async () => {
+            const token = Cookies.get("access_token") || "";
+            const res = await kelasService.getKelas(token);
+            return res.data;
+        },
+        enabled: browser,
+    }));
+
+    setContext("kelasQuery", kelasQuery);
+
+    const selectedKodeKunik = $derived(
+        page.url.searchParams.get("kelas") ||
+            kelasQuery.data?.data?.[0]?.kode_unik,
+    );
+
+    const activeKelas = $derived(
+        kelasQuery.data?.data?.find((k) => k.kode_unik === selectedKodeKunik),
+    );
+
+
+    $effect(() => {
+        if (browser && kelasQuery.data?.data?.[0]?.kode_unik) {
+            const isExcludedPage =
+                page.url.pathname.includes("/manajemen-kelas") ||
+                page.url.pathname.includes("/pustaka-materi");
+            const hasKelasParam = page.url.searchParams.has("kelas");
+
+            if (!isExcludedPage && !hasKelasParam) {
+                const url = new URL(page.url);
+                url.searchParams.set("kelas", kelasQuery.data.data[0].kode_unik);
+                goto(url.toString(), { replaceState: true, keepFocus: true });
+            } else if (isExcludedPage && hasKelasParam) {
+                const url = new URL(page.url);
+                url.searchParams.delete("kelas");
+                goto(url.toString(), { replaceState: true, keepFocus: true });
+            }
+        }
+    });
 
     const isSubPage = $derived(
         page.url.pathname.includes("/kognitif") ||
@@ -39,9 +83,17 @@
             return "Monitor Tugas";
         if (page.url.pathname.includes("/pustaka-materi"))
             return "Pustaka Materi";
-        if (classesState.list.length === 0) return "Manajemen Kelas";
+        if (!kelasQuery.data || kelasQuery.data.data.length === 0)
+            return "Manajemen Kelas";
         return "Dasbor Analitik Siswa";
     });
+
+    function handleSelectKelas(kode: string) {
+        const url = new URL(page.url);
+        url.searchParams.set("kelas", kode);
+        goto(url.toString());
+        dropdownOpen = false;
+    }
 </script>
 
 <div class="flex flex-col h-screen bg-white overflow-hidden">
@@ -78,7 +130,7 @@
                                     >Semester {tahunAjaranQuery.data?.semester || "..."}</span
                                 >
                             </p>
-                            {#if title !== "Manajemen Kelas" && title !== "Monitor Tugas" && classesState.list.length > 0}
+                            {#if title !== "Manajemen Kelas" && title !== "Monitor Tugas" && title !== "Pustaka Materi" && (kelasQuery.data?.data?.length || 0) > 0}
                                 <Separator
                                     orientation="vertical"
                                     class="h-3 bg-gray-200"
@@ -93,12 +145,61 @@
                         </div>
                     </div>
 
-                    {#if title !== "Manajemen Kelas" && classesState.list.length > 0}
-                        <div
-                            class="bg-[#efeff9] text-[#5b5fc7] font-medium px-4 py-2.5 rounded-full gap-2.5 flex flex-row items-center hover:bg-[#e5e5f7] cursor-pointer transition-colors border border-[#5b5fc7]/10 mb-1"
-                        >
-                            <span class="text-sm font-bold">XI 1PS 2</span>
-                            <ArrowDownIcon class="size-4" />
+                    {#if title !== "Manajemen Kelas" && title !== "Pustaka Materi" && (kelasQuery.data?.data?.length || 0) > 0}
+                        <div class="relative mb-1">
+                            <button
+                                onclick={() =>
+                                    (dropdownOpen = !dropdownOpen)}
+                                class="bg-[#efeff9] text-[#5b5fc7] font-medium px-4 py-2.5 rounded-full gap-2.5 flex flex-row items-center hover:bg-[#e5e5f7] transition-colors border border-[#5b5fc7]/10"
+                            >
+                                <span class="text-sm font-bold"
+                                    >{activeKelas?.nama || "Pilih Kelas"}</span
+                                >
+                                <ArrowDownIcon
+                                    class="size-4 transition-transform {dropdownOpen
+                                        ? 'rotate-180'
+                                        : ''}"
+                                />
+                            </button>
+
+                            {#if dropdownOpen}
+                                
+                                
+                                <button
+                                    type="button"
+                                    class="fixed inset-0 z-40 w-full h-full cursor-default bg-transparent border-none p-0"
+                                    onclick={() => (dropdownOpen = false)}
+                                    aria-label="Tutup menu dropdown"
+                                ></button>
+                                <div
+                                    class="absolute right-0 mt-2 w-56 bg-white rounded-xl border border-gray-100 py-2 z-50 overflow-hidden"
+                                >
+                                    <div
+                                        class="px-4 py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider"
+                                    >
+                                        Pilih Kelas
+                                    </div>
+                                    {#each kelasQuery.data?.data || [] as kelas}
+                                        <button
+                                            onclick={() =>
+                                                handleSelectKelas(
+                                                    kelas.kode_unik,
+                                                )}
+                                            class="w-full text-left px-4 py-2.5 text-sm hover:bg-[#efeff9] hover:text-[#5b5fc7] transition-colors flex items-center justify-between {selectedKodeKunik ===
+                                            kelas.kode_unik
+                                                ? 'bg-[#efeff9] text-[#5b5fc7] font-semibold'
+                                                : 'text-gray-700'}"
+                                        >
+                                            {kelas.nama}
+                                            {#if selectedKodeKunik === kelas.kode_unik}
+                                                <div
+                                                    class="size-1.5 rounded-full bg-[#5b5fc7]"
+                                                ></div>
+                                            {/if}
+                                        </button>
+                                    {/each}
+                                </div>
+                            {/if}
                         </div>
                     {/if}
                 </div>

@@ -6,19 +6,31 @@
     import ExternalLinkIcon from "@lucide/svelte/icons/external-link";
     import ChevronDown from "@lucide/svelte/icons/chevron-down";
 
+    import { page } from "$app/state";
     import { createQuery } from "@tanstack/svelte-query";
     import { siswaService } from "../../../../api/siswaService";
+    import { browser } from "$app/environment";
     import Cookies from "js-cookie";
+    import { getContext } from "svelte";
 
-    const accessToken = Cookies.get("access_token") || "";
+    const kelasQuery: any = getContext("kelasQuery");
+
+    const activeKodeKunik = $derived(
+        page.url.searchParams.get("kelas") ||
+            kelasQuery.data?.data?.[0]?.kode_unik,
+    );
 
     const siswaQuery = createQuery(() => ({
-        queryKey: ["siswa_kognitif"],
+        queryKey: ["siswa_kognitif", activeKodeKunik],
         queryFn: async () => {
-            const res = await siswaService.getAllSiswa(accessToken);
+            const token = Cookies.get("access_token") || "";
+            const res = await siswaService.getAllSiswa(
+                token,
+                activeKodeKunik || "",
+            );
             return res.data;
         },
-        enabled: !!accessToken,
+        enabled: browser && !!activeKodeKunik,
     }));
 
     const mappedSiswaData = $derived(
@@ -78,6 +90,12 @@
                                 <td class="py-4 bg-gray-50 h-10 rounded-md" colspan="6"></td>
                             </tr>
                         {/each}
+                    {:else if mappedSiswaData.length === 0}
+                        <tr>
+                            <td colspan="6" class="py-10 text-center text-gray-500">
+                                Belum ada siswa di kelas ini.
+                            </td>
+                        </tr>
                     {:else}
                         {#each mappedSiswaData as siswa}
                             <tr class="border-b border-border last:border-0 hover:bg-gray-50/50 transition-colors group">

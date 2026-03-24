@@ -2,12 +2,12 @@
 	import { page } from "$app/state";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import AppSidebar from "$lib/components/app-sidebar.svelte";
-	import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
+	import { QueryClientProvider } from "@tanstack/svelte-query";
+	import { queryClient } from "$lib/queryClient";
 	import "../routes/layout.css";
 
 	let { children } = $props();
 
-	const queryClient = new QueryClient();
 	const isPublicPage = $derived(String(page.url.pathname) === "/login" || String(page.url.pathname) === "/register" || String(page.url.pathname) === "/");
 </script>
 

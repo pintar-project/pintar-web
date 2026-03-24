@@ -33,7 +33,7 @@
                 class="flex items-center gap-3 bg-[#f3f4fa] p-2.5 rounded-[6px] w-full mx-auto"
             >
                 <div
-                    class="w-7 h-7 bg-white rounded-[4px] shadow-sm shrink-0"
+                    class="w-7 h-7 bg-white rounded-[4px] shrink-0"
                 ></div>
                 <span class="text-[13px] font-medium text-[#252424]"
                     >SMA Negeri 9 Depok</span
@@ -238,7 +238,9 @@
                         <Sidebar.MenuItem>
                             <Sidebar.MenuButton
                                 isActive={String(page.url.pathname) ===
-                                    "/guru/dashboard"}
+                                    "/guru/dashboard" ||
+                                    String(page.url.pathname) ===
+                                        "/guru/dashboard/kognitif"}
                                 class="p-0"
                             >
                                 {#snippet child({ props })}

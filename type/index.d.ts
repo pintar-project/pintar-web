@@ -26,6 +26,7 @@ declare interface Kelas {
     id: string;
     nama: string;
     deskripsi: string;
+    tingkat: string;
     kode_unik: string;
     pembuat: User;
     peserta: User[];

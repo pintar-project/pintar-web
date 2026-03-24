@@ -4,22 +4,14 @@
     import BuatKelasIcon from "$lib/assets/icon-wrapper.png";
     import CreateClassDialog from "$lib/components/dashboard/CreateClassDialog.svelte";
     import ClassList from "$lib/components/dashboard/ClassList.svelte";
-    import { createQuery } from "@tanstack/svelte-query";
-    import { kelasService } from "../../../../api/kelasService";
     import Cookies from "js-cookie";
+    import { getContext } from "svelte";
 
     let openCreateClass = $state(false);
 
     const accessToken = Cookies.get("access_token") || "";
 
-    const query = createQuery(() => ({
-        queryKey: ["kelas"],
-        queryFn: async () => {
-            const res = await kelasService.getKelas(accessToken);
-            return res.data.data;
-        },
-        enabled: !!accessToken,
-    }));
+    const query: any = getContext("kelasQuery");
 
 
 </script>
@@ -45,10 +37,10 @@
         <div class="flex items-center justify-center min-h-[60vh]">
             <p class="text-lg text-gray-500">Memuat data kelas...</p>
         </div>
-    {:else if query.data && query.data.length > 0}
+    {:else if query.data && query.data.data.length > 0}
         <div class="mt-10">
             <ClassList
-                classes={query.data}
+                classes={query.data.data}
                 onCreateClass={() => (openCreateClass = true)}
             />
         </div>

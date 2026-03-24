@@ -35,7 +35,7 @@
         {#if buttonHref}
             <a
                 href={buttonHref}
-                class="bg-[#5b5fc7] hover:bg-[#4a4db0] text-white px-6 py-3 rounded-[12px] font-bold flex items-center gap-2 shadow-sm transition-all transform hover:scale-105 active:scale-95"
+                class="bg-[#5b5fc7] hover:bg-[#4a4db0] text-white px-6 py-3 rounded-[12px] font-bold flex items-center gap-2 transition-all"
             >
                 {#if icon}
                     {@const Icon = icon}
@@ -48,7 +48,7 @@
         {:else}
             <button
                 onclick={buttonOnClick}
-                class="bg-[#5b5fc7] hover:bg-[#4a4db0] text-white px-6 py-3 rounded-[12px] font-bold flex items-center gap-2 shadow-sm transition-all transform hover:scale-105 active:scale-95"
+                class="bg-[#5b5fc7] hover:bg-[#4a4db0] text-white px-6 py-3 rounded-[12px] font-bold flex items-center gap-2 transition-all"
             >
                 {#if icon}
                     {@const Icon = icon}
