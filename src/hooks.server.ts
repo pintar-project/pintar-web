@@ -1,5 +1,5 @@
 import { redirect, type Handle } from '@sveltejs/kit';
-import { PUBLIC_API_URL } from '$env/static/public';
+import { env as dynamic_public } from '$env/dynamic/public';
 import { env } from '$env/dynamic/private';
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -12,7 +12,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	let verifiedRole: string | null = null;
 
 	// Clean approach: Server-side priority to Internal URL, fallback to Public
-	const apiUrl = env.INTERNAL_API_URL || PUBLIC_API_URL;
+	const apiUrl = env.INTERNAL_API_URL || dynamic_public.PUBLIC_API_URL;
 
 	if (accessToken) {
 		try {

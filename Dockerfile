@@ -1,4 +1,5 @@
-FROM node:20-slim
+# Build stage
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
@@ -6,14 +7,18 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+RUN npm run build
 
-# Environment variable for API endpoint
-ENV PUBLIC_API_URL=http://localhost:8000
+# Runtime stage
+FROM node:20-slim AS runner
 
-EXPOSE 5173
+WORKDIR /app
 
-# Sync SvelteKit to generate .svelte-kit directory (fixes tsconfig warning)
-RUN npx svelte-kit sync
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
 
-# Using dev mode as requested for immediate interaction
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+ENV NODE_ENV=production
+EXPOSE 3000
+
+CMD ["node", "build"]
