@@ -11,6 +11,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	let verifiedRole: string | null = null;
 
+	// Clean approach: Server-side priority to Internal URL, fallback to Public
 	const apiUrl = env.INTERNAL_API_URL || PUBLIC_API_URL;
 
 	if (accessToken) {
