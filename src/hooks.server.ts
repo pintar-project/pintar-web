@@ -1,5 +1,6 @@
 import { redirect, type Handle } from '@sveltejs/kit';
 import { PUBLIC_API_URL } from '$env/static/public';
+import { env } from '$env/dynamic/private';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const accessToken = event.cookies.get('access_token');
@@ -10,9 +11,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	let verifiedRole: string | null = null;
 
+	const apiUrl = env.INTERNAL_API_URL || PUBLIC_API_URL;
+
 	if (accessToken) {
 		try {
-			const response = await event.fetch(`${PUBLIC_API_URL}/auth/@me`, {
+			const response = await event.fetch(`${apiUrl}/auth/@me`, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
 				}
