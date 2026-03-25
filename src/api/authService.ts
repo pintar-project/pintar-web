@@ -3,6 +3,6 @@ import type { AxiosResponse } from "axios";
 
 export const authService = {
     async userLogin(data: UserLogin): Promise<AxiosResponse<UserLoginResponse>> {
-        return await axiosInstance.post("/auth/login", data);
+        return await axiosInstance.post("auth/login", data);
     }
 };

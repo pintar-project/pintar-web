@@ -34,7 +34,7 @@ export interface ModulResponse {
 
 export const modulService = {
     async getAllModul(accessToken: string): Promise<AxiosResponse<{ message: string; data: ModulResponse[] }>> {
-        return await axiosInstance.get(`/modul`, {
+        return await axiosInstance.get(`modul`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
